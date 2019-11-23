@@ -1,0 +1,6 @@
+*.o
+gol
+initboard
+
+outputs/*
+diff.out
