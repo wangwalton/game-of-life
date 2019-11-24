@@ -64,25 +64,26 @@ void * work(void *args) {
                 BOARD (inboard, i, jwest) +
                 BOARD (inboard, i, jeast) + 
                 BOARD (inboard, isouth, jwest) +
+
                 BOARD (inboard, isouth, j) + 
                 BOARD (inboard, isouth, jeast);
 
             BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
         }
-        if (i == 0) {
-            pthread_mutex_lock(&global_lock);
-            printf("Row: %03d Input:\n", i);
-            for (j = 0; j < ncols; j++) {
-                printf("%d", BOARD(inboard, i, j));
-            }
-            printf("\n");
-            printf("Row: %03d Output:\n", i);
-            for (j = 0; j < ncols; j++) {
-                printf("%d", BOARD(outboard, i, j));
-            }
-            printf("\n");
-            pthread_mutex_unlock(&global_lock);
-        }
+        // if (i == 0) {
+        //     pthread_mutex_lock(&global_lock);
+        //     printf("Row: %03d Input:\n", i);
+        //     for (j = 0; j < ncols; j++) {
+        //         printf("%d", BOARD(inboard, i, j));
+        //     }
+        //     printf("\n");
+        //     printf("Row: %03d Output:\n", i);
+        //     for (j = 0; j < ncols; j++) {
+        //         printf("%d", BOARD(outboard, i, j));
+        //     }
+        //     printf("\n");
+        //     pthread_mutex_unlock(&global_lock);
+        // }
     }
 }
 
@@ -120,21 +121,35 @@ sequential_game_of_life (char* outboard,
         for (i = 0; i < NUM_THREADS; i++) {
             pthread_join(tid[i], NULL);
         }
-        const int LDA = nrows;
-        int j;
-        printf("\nIteration %d:\n", curgen);
-        printf("Row: %03d Input:\n", 0);
-        for (j = 0; j < 50; j++) {
-            printf("%d", BOARD(inboard, 0, j));
+        // const int LDA = nrows;
+        // int j;
+        // printf("\nIteration %d:\n", curgen);
+        // printf("Row: %03d Input:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(inboard, 0, j));
+        // }
+        // printf("\n");
+        // printf("Row: %03d Output:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(outboard, 0, j));
+        // }
+        // printf("\n");
+        for (i = 0; i < NUM_THREADS; i++) {
+            SWAP_BOARDS( args[i].outboard, args[i].inboard );
         }
-        printf("\n");
-        printf("Row: %03d Output:\n", 0);
-        for (j = 0; j < 50; j++) {
-            printf("%d", BOARD(outboard, 0, j));
-        }
-        printf("\n");
+        
+        // printf("\nAfter swap\nIteration %d:\n", curgen);
+        // printf("Row: %03d Input:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(inboard, 0, j));
+        // }
+        // printf("\n");
+        // printf("Row: %03d Output:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(outboard, 0, j));
+        // }
+        // printf("\n");
 
-        SWAP_BOARDS( outboard, inboard );
     }
     /* 
      * We return the output board, so that we know which one contains
@@ -142,7 +157,7 @@ sequential_game_of_life (char* outboard,
      * Just be careful when you free() the two boards, so that you don't
      * free the same one twice!!! 
      */
-    return inboard;
+    return outboard;
 }
 
 

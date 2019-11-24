@@ -4,3 +4,5 @@ initboard
 
 outputs/*
 diff.out
+
+.DS_Store
