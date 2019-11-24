@@ -48,26 +48,48 @@ void * work(void *args) {
     if (end > nrows) {
         end = nrows;
     }
+    int inorth, isouth, jwest, jeast;
+    char q, w, e, a, d, z, x, c, neighbor_count;
+
     for (curgen = 0; curgen < gens_max; curgen++) {
         for (i = 0; i < nrows; i++)
         {
-            for (j = start; j < end; j++)
+            inorth = mod (i-1, nrows);
+            isouth = mod (i+1, nrows);
+            jwest = mod (j-1, ncols);
+            jeast = mod (j+1, ncols);
+
+            q = BOARD (inboard, inorth, jwest);
+            w = BOARD (inboard, inorth, j);
+            e = BOARD (inboard, inorth, jeast);
+            a = BOARD (inboard, i, jwest);
+            a = BOARD (inboard, i, j);
+            d = BOARD (inboard, i, jeast);
+            z = BOARD (inboard, isouth, jwest);
+            x = BOARD (inboard, isouth, j);
+            c = BOARD (inboard, isouth, jeast);
+
+            neighbor_count = q + w + e + a + d + z + x + c;
+            BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
+
+            for (j = start+1; j < end; j++)
             {
-                const int inorth = mod (i-1, nrows);
-                const int isouth = mod (i+1, nrows);
-                const int jwest = mod (j-1, ncols);
-                const int jeast = mod (j+1, ncols);
+                inorth = mod (i-1, nrows);
+                isouth = mod (i+1, nrows);
+                jeast = mod (j+1, ncols);
+                
+                q = w;
+                w = e;
+                a = s;
+                s = d;
+                z = x;
+                x = c;
+                
+                e = BOARD (inboard, inorth, jeast);
+                d = BOARD (inboard, i, jeast);
+                c = BOARD (inboard, isouth, jeast);
 
-                const char neighbor_count = 
-                    BOARD (inboard, inorth, jwest) + 
-                    BOARD (inboard, inorth, j) + 
-                    BOARD (inboard, inorth, jeast) + 
-                    BOARD (inboard, i, jwest) +
-                    BOARD (inboard, i, jeast) + 
-                    BOARD (inboard, isouth, jwest) +
-
-                    BOARD (inboard, isouth, j) + 
-                    BOARD (inboard, isouth, jeast);
+                neighbor_count = q + w + e + a + d + z + x + c;
 
                 BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
             }
