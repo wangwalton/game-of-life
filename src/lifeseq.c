@@ -18,8 +18,8 @@
 } while(0)
 
 #define BOARD( __board, __i, __j )  (__board[(__i) + LDA*(__j)])
+#define NUM_THREADS 16
 
-NUM_THREADS = 8;
 pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct {
@@ -40,17 +40,15 @@ void * work(void *args) {
     const int LDA = nrows;
 
     int i, j;
-    int start = (thread_num * nrows) / NUM_THREADS;
-    int end = ((thread_num + 1) * nrows) / NUM_THREADS;
+    int start = (thread_num * ncols) / NUM_THREADS;
+    int end = ((thread_num + 1) * ncols) / NUM_THREADS;
     if (end > nrows) {
         end = nrows;
     }
 
-    for (i = start; i < end; i++)
+    for (i = 0; i < nrows; i++)
     {
-
-
-        for (j = 0; j < ncols; j++)
+        for (j = start; j < end; j++)
         {
             const int inorth = mod (i-1, nrows);
             const int isouth = mod (i+1, nrows);
@@ -70,21 +68,9 @@ void * work(void *args) {
 
             BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
         }
-        // if (i == 0) {
-        //     pthread_mutex_lock(&global_lock);
-        //     printf("Row: %03d Input:\n", i);
-        //     for (j = 0; j < ncols; j++) {
-        //         printf("%d", BOARD(inboard, i, j));
-        //     }
-        //     printf("\n");
-        //     printf("Row: %03d Output:\n", i);
-        //     for (j = 0; j < ncols; j++) {
-        //         printf("%d", BOARD(outboard, i, j));
-        //     }
-        //     printf("\n");
-        //     pthread_mutex_unlock(&global_lock);
-        // }
+
     }
+    return NULL;
 }
 
 char*
@@ -108,9 +94,6 @@ sequential_game_of_life (char* outboard,
         args[i].ncols = ncols;
     }
 
-    /* HINT: in the parallel decomposition, LDA may not be equal to
-       nrows! */
-
     int curgen;
 
     for (curgen = 0; curgen < gens_max; curgen++)
@@ -118,46 +101,11 @@ sequential_game_of_life (char* outboard,
         for (i = 0; i < NUM_THREADS; i++) {
             pthread_create(&tid[i], NULL, work, &args[i]);
         }
+
         for (i = 0; i < NUM_THREADS; i++) {
             pthread_join(tid[i], NULL);
-        }
-        // const int LDA = nrows;
-        // int j;
-        // printf("\nIteration %d:\n", curgen);
-        // printf("Row: %03d Input:\n", 0);
-        // for (j = 0; j < 50; j++) {
-        //     printf("%d", BOARD(inboard, 0, j));
-        // }
-        // printf("\n");
-        // printf("Row: %03d Output:\n", 0);
-        // for (j = 0; j < 50; j++) {
-        //     printf("%d", BOARD(outboard, 0, j));
-        // }
-        // printf("\n");
-        for (i = 0; i < NUM_THREADS; i++) {
             SWAP_BOARDS( args[i].outboard, args[i].inboard );
         }
-        
-        // printf("\nAfter swap\nIteration %d:\n", curgen);
-        // printf("Row: %03d Input:\n", 0);
-        // for (j = 0; j < 50; j++) {
-        //     printf("%d", BOARD(inboard, 0, j));
-        // }
-        // printf("\n");
-        // printf("Row: %03d Output:\n", 0);
-        // for (j = 0; j < 50; j++) {
-        //     printf("%d", BOARD(outboard, 0, j));
-        // }
-        // printf("\n");
-
     }
-    /* 
-     * We return the output board, so that we know which one contains
-     * the final result (because we've been swapping boards around).
-     * Just be careful when you free() the two boards, so that you don't
-     * free the same one twice!!! 
-     */
     return outboard;
 }
-
-

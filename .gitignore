@@ -2,9 +2,11 @@
 gol
 initboard
 
-outputs/*
+src/outputs/*
 diff.out
 
 .DS_Store
 gol.tar.gz
 *.swp
+
+src/helper.txt
