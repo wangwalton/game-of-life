@@ -49,7 +49,7 @@ void * work(void *args) {
         end = nrows;
     }
     int inorth, isouth, jwest, jeast;
-    char q, w, e, a, d, z, x, c, neighbor_count;
+    char q, w, e, a, s, d, z, x, c, neighbor_count;
 
     for (curgen = 0; curgen < gens_max; curgen++) {
         for (i = 0; i < nrows; i++)
@@ -63,19 +63,17 @@ void * work(void *args) {
             w = BOARD (inboard, inorth, j);
             e = BOARD (inboard, inorth, jeast);
             a = BOARD (inboard, i, jwest);
-            a = BOARD (inboard, i, j);
+            s = BOARD (inboard, i, j);
             d = BOARD (inboard, i, jeast);
             z = BOARD (inboard, isouth, jwest);
             x = BOARD (inboard, isouth, j);
             c = BOARD (inboard, isouth, jeast);
 
             neighbor_count = q + w + e + a + d + z + x + c;
-            BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
+            BOARD(outboard, i, start) = alivep (neighbor_count, BOARD (inboard, i, start));
 
             for (j = start+1; j < end; j++)
             {
-                inorth = mod (i-1, nrows);
-                isouth = mod (i+1, nrows);
                 jeast = mod (j+1, ncols);
                 
                 q = w;
