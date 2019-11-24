@@ -1,4 +1,4 @@
-teamName: xxx
-student1_fullName: xxx
-student1_studentNumber: 123456789
-student1_email: xxx@mail.utoronto.ca
+teamName: miley-cyrus
+student1_fullName: yupeng wang
+student1_studentNumber: 1003272521
+student1_email: yupeng.wang@mail.utoronto.ca
