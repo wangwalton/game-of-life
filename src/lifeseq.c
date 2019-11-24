@@ -107,5 +107,5 @@ sequential_game_of_life (char* outboard,
             SWAP_BOARDS( args[i].outboard, args[i].inboard );
         }
     }
-    return outboard;
+    return inboard;
 }
