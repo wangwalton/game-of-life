@@ -10,3 +10,7 @@ gol.tar.gz
 *.swp
 
 src/helper.txt
+
+.vscode/
+
+*.jpg

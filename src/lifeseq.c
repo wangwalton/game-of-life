@@ -5,7 +5,12 @@
  ****************************************************************************/
 #include "life.h"
 #include "util.h"
+#include <math.h>
+#include "barrier.h"
 #include <pthread.h>
+#include <stdio.h>
+#include <math.h>
+
 
 /**
  * Swapping the two boards only involves swapping pointers, not
@@ -17,7 +22,7 @@
   b2 = temp; \
 } while(0)
 
-#define BOARD( __board, __i, __j )  (__board[(__i) + LDA*(__j)])
+#define BOARD( __board, __i, __j )  (__board[(__i)*LDA + (__j)])
 #define NUM_THREADS 16
 
 pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -43,8 +48,8 @@ void * work(void *args) {
     const int LDA = nrows;
 
     int i, j, curgen;
-    int start = (thread_num * ncols) / NUM_THREADS;
-    int end = ((thread_num + 1) * ncols) / NUM_THREADS;
+    int start = ceil((thread_num * ncols) / NUM_THREADS);
+    int end = ceil(((thread_num + 1) * ncols) / NUM_THREADS);
     if (end > nrows) {
         end = nrows;
     }
@@ -54,6 +59,7 @@ void * work(void *args) {
     for (curgen = 0; curgen < gens_max; curgen++) {
         for (i = 0; i < nrows; i++)
         {
+            j = start;
             inorth = mod (i-1, nrows);
             isouth = mod (i+1, nrows);
             jwest = mod (j-1, ncols);
@@ -75,20 +81,18 @@ void * work(void *args) {
             for (j = start+1; j < end; j++)
             {
                 jeast = mod (j+1, ncols);
-                
                 q = w;
                 w = e;
                 a = s;
                 s = d;
                 z = x;
                 x = c;
-                
+
                 e = BOARD (inboard, inorth, jeast);
                 d = BOARD (inboard, i, jeast);
                 c = BOARD (inboard, isouth, jeast);
 
                 neighbor_count = q + w + e + a + d + z + x + c;
-
                 BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
             }
 
@@ -131,5 +135,9 @@ sequential_game_of_life (char* outboard,
         
     }
     pthread_barrier_destroy(&bsync);
-    return inboard;
+    if (gens_max % 2 == 0) {
+        return inboard;
+    } else {
+        return outboard;
+    }
 }
