@@ -1,0 +1,155 @@
+        // if (i == 0) {
+        //     pthread_mutex_lock(&global_lock);
+        //     printf("Row: %03d Input:\n", i);
+        //     for (j = 0; j < ncols; j++) {
+        //         printf("%d", BOARD(inboard, i, j));
+        //     }
+        //     printf("\n");
+        //     printf("Row: %03d Output:\n", i);
+        //     for (j = 0; j < ncols; j++) {
+        //         printf("%d", BOARD(outboard, i, j));
+        //     }
+        //     printf("\n");
+        //     pthread_mutex_unlock(&global_lock);
+        // }
+
+
+main
+
+        // const int LDA = nrows;
+        // int j;
+        // printf("\nIteration %d:\n", curgen);
+        // printf("Row: %03d Input:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(inboard, 0, j));
+        // }
+        // printf("\n");
+        // printf("Row: %03d Output:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(outboard, 0, j));
+        // }
+        // printf("\n");
+
+
+        // printf("\nAfter swap\nIteration %d:\n", curgen);
+        // printf("Row: %03d Input:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(inboard, 0, j));
+        // }
+        // printf("\n");
+        // printf("Row: %03d Output:\n", 0);
+        // for (j = 0; j < 50; j++) {
+        //     printf("%d", BOARD(outboard, 0, j));
+        // }
+        // printf("\n");
+
+
+
+    for (curgen = 0; curgen < gens_max; curgen++) {
+        for (i = 0; i < nrows; i++)
+        {
+            inorth = mod (i-1, nrows);
+            isouth = mod (i+1, nrows);
+            jwest = mod (-1, ncols);
+            jeast = mod (1, ncols);
+
+            q = BOARD (inboard, inorth, jwest);
+            w = BOARD (inboard, inorth, 0);
+            e = BOARD (inboard, inorth, jeast);
+            a = BOARD (inboard, i, jwest);
+            s = BOARD (inboard, i, 0);
+            d = BOARD (inboard, i, jeast);
+            z = BOARD (inboard, isouth, jwest);
+            x = BOARD (inboard, isouth, 0);
+            c = BOARD (inboard, isouth, jeast);
+
+            neighbor_count = q + w + e + a + d + z + x + c;
+            BOARD(outboard, i, start) = alivep (neighbor_count, BOARD (inboard, i, start));
+
+            for (j = start+1; j < end; j++)
+            {
+                jeast = mod (j+1, ncols);
+                
+                q = w;
+                w = e;
+                a = s;
+                s = d;
+                z = x;
+                x = c;
+                
+                e = BOARD (inboard, inorth, jeast);
+                d = BOARD (inboard, i, jeast);
+                c = BOARD (inboard, isouth, jeast);
+
+                neighbor_count = q + w + e + a + d + z + x + c;
+
+                BOARD(outboard, i, j) = alivep (neighbor_count, BOARD (inboard, i, j));
+            }
+
+        }
+        pthread_barrier_wait(&bsync);
+        SWAP_BOARDS( outboard, inboard );
+    }
+
+
+
+    // int i, j, row_bound_1;
+    // int inorth, isouth, jwest, jeast;
+    // char q, w, e, a, s, d, z, x, c, neighbor_count;
+    // char edge_updated;
+
+            // if (curgen % 1 == 0) {
+            //     printf("Curgen state info: %d\n", curgen);
+            //     for (int row = 0; row < tile_rows; row++) {
+            //         for (int col = 0; col < NUM_THREADS; col++) {
+            //             printf("%d", old_state.updated[row*NUM_THREADS+col]);
+            //         }
+            //         printf("\n");
+            //     }
+            // }
+            // if (curgen > SAVE_START && curgen % SAVE_INTERVAL == 0) {
+            //     char buf[20];
+            //     snprintf(buf, 20, "outputs/1k_%d.pbm", curgen); // puts string into buffer
+            //     printf("Saving %d\n", curgen);
+            //     FILE* out = fopen (buf, "w");
+            //     save_board(out, outboard, nrows, ncols);
+            //     fclose(out);
+            // }
+
+
+// board state
+typedef struct {
+    char* updated;
+} board_state;
+
+void init_board_state() {
+    int size = NUM_THREADS * tile_rows * sizeof(char);
+    printf("Size: %d\n", size);
+    old_state.updated = malloc(size);
+    new_state.updated = malloc(size);
+}
+
+char tile_should_updated(int thread_num, int tile_num, int rows) {
+    return 1;
+    int inorth = mod (tile_num-1, rows);
+    int isouth = mod (tile_num+1, NUM_THREADS);
+    int jwest = mod (thread_num-1, rows);
+    int jeast = mod (thread_num+1, NUM_THREADS);
+
+    if ( _BOARD (old_state.updated, inorth, jwest) || _BOARD (old_state.updated, inorth, thread_num) 
+            || _BOARD (old_state.updated, inorth, jeast) || _BOARD (old_state.updated, tile_num, jwest)
+            || _BOARD (old_state.updated, tile_num, jeast) || _BOARD (old_state.updated, isouth, jwest)
+            || _BOARD (old_state.updated, isouth, tile_num) || _BOARD (old_state.updated, isouth, jeast)
+            || _BOARD (old_state.updated, tile_num, thread_num)) {
+        return 1;
+    }
+    return 0;
+}
+
+board_state old_state;
+board_state new_state;
+//_BOARD(new_state.updated, thread_num, ti / TILE_HEIGHT) = updated;
+
+            char* temp = new_state.updated;
+            new_state.updated = old_state.updated;
+            old_state.updated = temp;

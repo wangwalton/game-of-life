@@ -2,6 +2,8 @@
 gol
 initboard
 
+src/build/*
+
 src/outputs/*
 diff.out
 
@@ -14,3 +16,6 @@ src/helper.txt
 .vscode/
 
 *.jpg
+
+src/life_test
+src/gol_verify

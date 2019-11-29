@@ -11,4 +11,6 @@
 void
 save_board (FILE* output, const char board[], const int nrows, const int ncols);
 
+void
+save_board_fname(char* prefix, int body, char* suffix, const char board[], int nrows, int ncols);
 #endif /* _load_h */

@@ -42,3 +42,13 @@ save_board (FILE* output, const char board[], const int nrows, const int ncols)
   save_dimensions (output, nrows, ncols);
   save_board_values (output, board, nrows, ncols);
 }
+
+void 
+save_board_fname(char* prefix, int body, char* suffix, const char board[], int nrows, int ncols) {
+    char buf[256];
+    snprintf(buf, 128, "%s%d%s", prefix, body, suffix); // puts string into buffer
+    printf("Saving %d\n", body);
+    FILE* out = fopen (buf, "w");
+    save_board(out, board, nrows, ncols);
+    fclose(out);
+}

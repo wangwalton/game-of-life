@@ -1,4 +1,4 @@
-convert $1 temp1.jpg
-convert $2 temp2.jpg
+convert $1 build/temp1.jpg
+convert $2 build/temp2.jpg
 
-python diff_image.py
+python spike/diff_image.py

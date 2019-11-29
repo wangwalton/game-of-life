@@ -14,7 +14,6 @@
 #define DO_VERIFY 0
 #endif // VERIFY_FLAG
 
-
 static int
 to_int (int* num, const char* s)
 {
@@ -178,7 +177,5 @@ main (int argc, char* argv[])
     free (outboard);
   if (checkboard != NULL)
     free (checkboard);
-
   return 0;
 }
-

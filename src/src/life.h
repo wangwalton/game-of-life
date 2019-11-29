@@ -26,5 +26,7 @@ sequential_game_of_life (char* outboard,
 			 const int ncols,
 			 const int gens_max);
 
+char same_subboard(char* dst, char* src, int is, int ie, int js, int je, int ncols);
+void copy_subboard(char* dst, char* src, int is, int ie, int js, int je, int ncols);
 
 #endif /* _life_h */

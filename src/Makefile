@@ -17,47 +17,65 @@ else
 	endif
 endif
 
+SDIR=src
+ODIR=build
+TDIR=tst
+
 GOL_EXE = gol
+GOL_OBJS = $(ODIR)/gol.o $(ODIR)/life.o $(ODIR)/lifeseq.o $(ODIR)/load.o $(ODIR)/save.o 
+
 GOL_VERIFY_EXE = gol_verify
-GOL_OBJS = gol.o life.o lifeseq.o load.o save.o 
-GOL_VERIFY_OBJS = gol.verify.o life.o lifeseq.o load.o save.o 
+GOL_VERIFY_OBJS = $(ODIR)/gol.verify.o $(ODIR)/life.o $(ODIR)/lifeseq.o $(ODIR)/load.o $(ODIR)/save.o 
+
+TEST_EXE = life_test
+TEST_OBJS = $(ODIR)/life_test.o $(ODIR)/life.o $(ODIR)/lifeseq.o $(ODIR)/load.o $(ODIR)/save.o
+
 BITBOARD_EXE = initboard
-BITBOARD_OBJS = bitboard.o random_bit.o
-EXES = $(GOL_EXE) $(BITBOARD_EXE)
-OBJS = $(GOL_OBJS) $(BITBOARD_OBJS)
+BITBOARD_OBJS = $(ODIR)/bitboard.o $(ODIR)/random_bit.o
 
+EXES = $(GOL_EXE) $(BITBOARD_EXE) $(TEST_EXE) 
+OBJS = $(GOL_OBJS) $(BITBOARD_OBJS) $(TEST_EXE)
 
-all: $(GOL_EXE) $(BITBOARD_EXE)
+all: $(GOL_EXE) $(BITBOARD_EXE) $(TEST_EXE) $(GOL_VERIFY_EXE)
 
 $(GOL_EXE): $(GOL_OBJS) 
-	$(LINKER) $(CFLAGS) $(LDFLAGS) $(GOL_OBJS) -o $@ 
+	$(LINKER) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
 
 $(GOL_VERIFY_EXE): $(GOL_VERIFY_OBJS) 
-	$(LINKER) $(CFLAGS) $(LDFLAGS) $(GOL_VERIFY_OBJS) -o $@ 
+	$(LINKER) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
 
 $(BITBOARD_EXE): $(BITBOARD_OBJS)
-	$(LINKER) $(CFLAGS) $(LDFLAGS) $(BITBOARD_OBJS) -o $@ 
+	$(LINKER) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
 
-%.o: %.c
+$(TEST_EXE): $(TEST_OBJS) 
+	$(LINKER) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
+
+$(ODIR)/%.o: $(SDIR)/%.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-%.verify.o: %.c
+$(ODIR)/%.o: $(TDIR)/%.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+
+$(ODIR)/%.verify.o: $(SDIR)/%.c
 	$(CC) -c $(CFLAGS) -DVERIFY_FLAG $(CPPFLAGS) $< -o $@
 
-lifeseq.o: lifeseq.c life.h util.h
+$(ODIR)/lifeseq.o: $(SDIR)/lifeseq.c $(SDIR)/life.h $(SDIR)/util.h
 
-life.o: life.c life.h util.h
+$(ODIR)/life.o: $(SDIR)/life.c $(SDIR)/life.h $(SDIR)/util.h
 
-load.o: load.c load.h
+$(ODIR)/load.o: $(SDIR)/load.c $(SDIR)/load.h
 
-save.o: save.c save.h
+$(ODIR)/save.o: $(SDIR)/save.c $(SDIR)/save.h
 
-gol.o: gol.c life.h load.h save.h 
+$(ODIR)/life_test.o: $(TDIR)/life_test.c $(SDIR)/life.h $(SDIR)/load.h $(SDIR)/save.h
 
-bitboard.o: bitboard.c random_bit.h
+$(ODIR)/gol.o: $(SDIR)/gol.c $(SDIR)/life.h $(SDIR)/load.h $(SDIR)/save.h 
 
-random_bit.o: random_bit.c random_bit.h
+$(ODIR)/bitboard.o: $(SDIR)/bitboard.c $(SDIR)/random_bit.h
 
+$(ODIR)/random_bit.o: $(SDIR)/random_bit.c $(SDIR)/random_bit.h
 
 clean:
-	rm -f $(GOL_OBJS) $(GOL_VERIFY_OBJS) $(GOL_EXE) $(GOL_VERIFY_EXE) $(BITBOARD_OBJS) $(BITBOARD_EXE) 
+	rm -f $(GOL_OBJS) $(GOL_VERIFY_OBJS) $(GOL_EXE) $(GOL_VERIFY_EXE) \
+		$(BITBOARD_OBJS) $(BITBOARD_EXE) $(TEST_OBJS) $(TEST_EXE)
