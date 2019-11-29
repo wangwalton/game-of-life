@@ -2,7 +2,6 @@
 gol
 initboard
 
-src/build/*
 
 src/outputs/*
 diff.out
@@ -19,3 +18,4 @@ src/helper.txt
 
 src/life_test
 src/gol_verify
+
