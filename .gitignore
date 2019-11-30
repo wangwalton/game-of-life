@@ -4,6 +4,7 @@ initboard
 
 
 src/outputs/*
+!src/outputs/1k_verify_out.pbm
 diff.out
 
 .DS_Store
