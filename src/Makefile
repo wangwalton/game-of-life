@@ -62,7 +62,7 @@ $(ODIR)/%.verify.o: $(SDIR)/%.c
 
 $(ODIR)/lifeseq.o: $(SDIR)/lifeseq.c $(SDIR)/life.h $(SDIR)/util.h
 
-$(ODIR)/life.o: $(SDIR)/life.c $(SDIR)/life.h $(SDIR)/util.h
+$(ODIR)/life.o: $(SDIR)/life.c $(SDIR)/life.h $(SDIR)/util.h $(SDIR)/work_queue.h $(SDIR)/board.h
 
 $(ODIR)/load.o: $(SDIR)/load.c $(SDIR)/load.h
 

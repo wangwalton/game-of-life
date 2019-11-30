@@ -153,3 +153,6 @@ board_state new_state;
             char* temp = new_state.updated;
             new_state.updated = old_state.updated;
             old_state.updated = temp;
+
+
+
