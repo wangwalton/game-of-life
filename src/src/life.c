@@ -6,7 +6,6 @@
 #include "util.h"
 #include "work_queue.h"
 #include "board.h"
-#include "barrier.h"
 #include "util.h"
 
 #include <stdio.h>
@@ -58,9 +57,9 @@ char compare_char(char* left, char* right, int len) {
 
 void
 atomic_increment(int* count) {
-	// pthread_mutex_lock(&global_lock);
-	// (*count)++;
-	// pthread_mutex_unlock(&global_lock);
+	pthread_mutex_lock(&global_lock);
+	(*count)++;
+	pthread_mutex_unlock(&global_lock);
 }
 
 char top_edge_repeating(TileState* ts) {
@@ -150,14 +149,14 @@ char surrounding_edge_repeating(TileState* ts) {
 	char top_right_repeating = (top_right->tile_0[top_right_id] == top_right->tile_2[top_right_id]);
 	char bot_left_repeating = (bot_left->tile_0[bot_left_id] == bot_left->tile_2[bot_left_id]);
 	char bot_right_repeating = (bot_right->tile_0[bot_right_id] == bot_right->tile_2[bot_right_id]);
-	//printf("ya\n");
+
 	if (top_left_repeating && top_right_repeating 
 			&& bot_left_repeating && bot_right_repeating && top_edge_repeating(bot) && bot_edge_repeating(top)
 			&& left_edge_repeating(right) && right_edge_repeating(left)){
 		
 		return 1;
 	}
-	//printf("Ending\n\n");
+
 	return 0;
 }
 
@@ -199,12 +198,16 @@ char update_tile_element(TileState* ts, int tile_i, int tile_j) {
 
 void update_tile_element_body(TileState* ts) {
 	char q, w, e, a, s, d, z, x, c;
-	int i, j;
+	int i;
 	char neighbor_count;
 	char* top_left = ts->tile_0;
 	char* new_cell = ts->next_tile + TILE_WIDTH_P1;
 
-	for (i = 1; i < TILE_HEIGHT_1; i++) {
+	char* cap;
+	char* start;
+	char* i_cap = top_left + TILE_SIZE;
+
+	for (i = 0; i < TILE_WIDTH_S2; i++) {
 		q = *(top_left);
 		w = *(top_left+1);
 		e = *(top_left+2);
@@ -216,14 +219,14 @@ void update_tile_element_body(TileState* ts) {
 		x = *(top_left+TILE_WIDTH_M2_P1);
 		c = *(top_left+TILE_WIDTH_M2_P2);
 
-		for (j = 1; j < TILE_WIDTH_1; j++) {
+		cap = top_left + TILE_WIDTH_S2;
+
+		while (top_left < cap) {
 			neighbor_count = q + w + e + a + d + z + x + c;
 
 			*new_cell = alivep(neighbor_count, s);
-
-			top_left++;
 			new_cell++;
-
+			top_left++;
 			q = w;
 			w = e;
 			a = s;
@@ -265,7 +268,7 @@ void update_tile_element_top(TileState* ts) {
 	}
 
 	char q, w, e, a, s, d, z, x, c;
-	int i, j;
+	int i;
 	char neighbor_count;
 	char* mid = ts->tile_0;
 	char* top = other->tile_0 + TILE_SIZE_SWIDTH;
@@ -305,10 +308,53 @@ void update_tile_element_top(TileState* ts) {
 }
 
 void update_tile_element_right(TileState* ts) {
+	TileState* other;
+	if (ts->tile_col == ntilesc_s1) {
+		other = ts - ntilesc_s1;
+	} else {
+		other = ts + 1;
+	}
+
+	char q, w, e, a, s, d, z, x, c;
 	int i;
-	for (i = 1; i < TILE_HEIGHT_1; i++) {
-		if (update_tile_element(ts, i, TILE_WIDTH_1)) {
-		}
+	char neighbor_count;
+
+	char* left = ts->tile_0 + TILE_WIDTH_S2;
+	char* right = other->tile_0;
+	char* new_cell = ts->next_tile + TILE_WIDTH_M2_S1;
+
+	q = *(left);
+	a = *(left+TILE_WIDTH);
+	z = *(left+TILE_WIDTH_M2);
+
+	w = *(left+1);
+	s = *(left+TILE_WIDTH_P1);
+	x = *(left+TILE_WIDTH_M2_P1);
+
+	e = *(right);
+	d = *(right+TILE_WIDTH);
+	c = *(right+TILE_WIDTH_M2);
+
+	for (i = 0; i < TILE_WIDTH_S2; i++) {
+
+		neighbor_count = q + w + e + a + d + z + x + c;
+
+		*new_cell = alivep(neighbor_count, s);
+
+		right += TILE_WIDTH;
+		left += TILE_WIDTH;
+		new_cell += TILE_WIDTH;
+		
+		q = a;
+		a = z;
+		w = s;
+		s = x; 
+		e = d;
+		d = c;
+		z = *(left+TILE_WIDTH_M2);
+		x = *(left+TILE_WIDTH_M2_P1);
+		c = *(right+TILE_WIDTH_M2);
+
 	}
 }
 
@@ -321,7 +367,7 @@ void update_tile_element_bot(TileState* ts) {
 	}
 
 	char q, w, e, a, s, d, z, x, c;
-	int i, j;
+	int i;
 	char neighbor_count;
 
 	char* top = ts->tile_0 + TILE_SIZE_M2SWIDTH;
@@ -363,10 +409,53 @@ void update_tile_element_bot(TileState* ts) {
 }
 
 void update_tile_element_left(TileState* ts) {
+	TileState* other;
+	if (ts->tile_col == 0) {
+		other = ts + ntilesc_s1;
+	} else {
+		other = ts - 1;
+	}
+
+	char q, w, e, a, s, d, z, x, c;
 	int i;
+	char neighbor_count;
+
+	char* left = other->tile_0 + TILE_WIDTH_1;
+	char* mid = ts->tile_0;
+	char* new_cell = ts->next_tile + TILE_WIDTH;
+
+	q = *(left);
+	a = *(left+TILE_WIDTH);
+	z = *(left+TILE_WIDTH_M2);
+
+	w = *(mid);
+	s = *(mid+TILE_WIDTH);
+	x = *(mid+TILE_WIDTH_M2);
+
+	e = *(mid+1);
+	d = *(mid+TILE_WIDTH_P1);
+	c = *(mid+TILE_WIDTH_M2_P1);
+
 	for (i = 1; i < TILE_HEIGHT_1; i++) {
-		if (update_tile_element(ts, i, 0)) {
-		}
+		neighbor_count = q + w + e + a + d + z + x + c;
+
+		*new_cell = alivep(neighbor_count, s);
+
+		mid+= TILE_WIDTH;
+		left+= TILE_WIDTH;
+		new_cell += TILE_WIDTH;
+		
+		q = a;
+		a = z;
+		w = s;
+		s = x; 
+		e = d;
+		d = c;
+
+		z = *(left+TILE_WIDTH_M2);
+		x = *(mid+TILE_WIDTH_M2);
+		c = *(mid+TILE_WIDTH_M2_P1);
+
 	}
 }
 
@@ -395,14 +484,10 @@ void update_tile(TileState* ts) {
 }
 
 void process_tile(TileState* ts) {
-	// update_tile(ts);
-	// return;
-	//printf("process t\n");
 	atomic_increment(&total_tiles);
 	if (!ts->repeating) {
 		if (ts->gen > GEN_THRESH && compare_char(ts->tile_0, ts->tile_2, TILE_SIZE) == 1
 				&& surrounding_edge_repeating(ts)) {
-			//printf("\t\tSurrounding repeating\n");
 			memcpy(ts->next_tile, ts->tile_1, TILE_SIZE);
 			ts->next_repeating = 1;
 			atomic_increment(&repeating_tile_init);
@@ -428,12 +513,12 @@ void* work(void *args) {
 		n = deque(wq);
 		
 		if (n == NULL) {
+
+			if (empty(nwq)) break;
 			pthread_barrier_wait(&bsync);
 			if (thread_num == 0) {
 				swap_all_tiles(global_ts, ntilesr, ntilesc);
 			}
-			if (empty(nwq)) break;
-
 			pthread_barrier_wait(&bsync);
 			if (thread_num == 0) {
 				swap_wq();
@@ -442,8 +527,6 @@ void* work(void *args) {
 			pthread_barrier_wait(&bsync);
 
 		} else {
-			// printf("Thread %d executing work tile (%d, %d), gen: %d\n", 
-			// 		thread_num, n->w->tile_row,n->w->tile_col,n->w->gen);
 			process_tile(n->w);
 			n->w->gen += 1;
 			if (n->w->gen < max_gens) {
@@ -491,7 +574,6 @@ game_of_life (char* outboard,
     for (i = 0; i < NUM_THREADS; i++) {
         pthread_join(tid[i], NULL);
     }
-
 	pthread_barrier_destroy(&bsync);
 	board_exit(global_ts, outboard, nrows, ncols);
 	printf("total_tiles: %d, repeating_tile %d\n", total_tiles, repeating_tile);

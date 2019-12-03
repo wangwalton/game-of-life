@@ -6,8 +6,8 @@
 #include <string.h>
 #include <math.h>
 
-#define TILE_HEIGHT 16
-#define TILE_WIDTH 16
+#define TILE_HEIGHT 64
+#define TILE_WIDTH 64
 
 #define TILE_HEIGHT_1 (TILE_HEIGHT - 1)
 #define TILE_WIDTH_1 (TILE_WIDTH - 1)

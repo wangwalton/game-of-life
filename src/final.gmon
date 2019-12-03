@@ -1,0 +1,422 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 24.53      1.64     1.64  4823566     0.34     0.44  surrounding_edge_repeating
+ 22.65      3.15     1.51   265875     5.68     7.81  update_tile_element_body
+ 11.18      3.89     0.75 66532907     0.01     0.01  alivep
+  9.30      4.51     0.62     9804    63.28    63.28  swap_all_tiles
+  5.10      4.85     0.34 21743937     0.02     0.02  mod
+  3.90      5.11     0.26  5087025     0.05     0.05  extract_tail
+  3.83      5.37     0.26  8313488     0.03     0.03  board
+  2.55      5.54     0.17   271779     0.63     0.78  update_tile_element_left
+  2.55      5.71     0.17   269018     0.63     0.79  update_tile_element_bot
+  2.25      5.86     0.15   273923     0.55     0.70  update_tile_element_right
+  1.80      5.98     0.12   262793     0.46     0.62  update_tile_element_top
+  1.50      6.08     0.10  4238499     0.02     0.02  insert_head
+  1.35      6.17     0.09  1063035     0.08     0.40  update_tile_element
+  1.20      6.25     0.08  4350469     0.02     0.02  right_edge_repeating
+  0.90      6.31     0.06                             main
+  0.75      6.36     0.05  4888072     0.01     0.03  enque
+  0.75      6.41     0.05  4188379     0.01     0.01  left_edge_repeating
+  0.75      6.46     0.05  4154441     0.01     0.01  top_edge_repeating
+  0.60      6.50     0.04  9543831     0.00     0.00  atomic_increment
+  0.60      6.54     0.04                             work
+  0.45      6.57     0.03  4467429     0.01     0.06  deque
+  0.30      6.59     0.02  4450083     0.00     1.24  process_tile
+  0.30      6.61     0.02  4207062     0.00     0.00  bot_edge_repeating
+  0.30      6.63     0.02   270905     0.07     0.07  compare_char
+  0.30      6.65     0.02   265269     0.08     0.48  update_tile_element_bot_right
+  0.15      6.66     0.01   265309     0.04     0.44  update_tile_element_top_right
+  0.15      6.67     0.01   157665     0.06     0.06  empty
+  0.08      6.67     0.01     9999     0.50     0.50  swap_wq
+  0.00      6.67     0.00   272329     0.00    12.02  update_tile
+  0.00      6.67     0.00   265863     0.00     0.40  update_tile_element_bot_left
+  0.00      6.67     0.00   260736     0.00     0.40  update_tile_element_top_left
+  0.00      6.67     0.00     7371     0.00     4.57  update_tile_edge
+  0.00      6.67     0.00     4100     0.00     0.00  new_node
+  0.00      6.67     0.00        2     0.00     0.00  init_queue
+  0.00      6.67     0.00        2     0.00     0.00  make_board
+  0.00      6.67     0.00        1     0.00     0.00  board_exit
+  0.00      6.67     0.00        1     0.00    96.70  game_of_life
+  0.00      6.67     0.00        1     0.00     0.00  init_board
+  0.00      6.67     0.00        1     0.00    96.70  init_queue_with_work
+  0.00      6.67     0.00        1     0.00     0.00  load_board
+  0.00      6.67     0.00        1     0.00     0.00  load_board_values
+  0.00      6.67     0.00        1     0.00     0.00  load_dimensions
+  0.00      6.67     0.00        1     0.00     0.00  save_board
+  0.00      6.67     0.00        1     0.00     0.00  save_board_values
+  0.00      6.67     0.00        1     0.00     0.00  save_dimensions
+  0.00      6.67     0.00        1     0.00     0.00  to_int
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.15% of 6.67 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.1    0.04    6.57                 work [1]
+                0.02    5.48 4450083/4450083     process_tile [2]
+                0.62    0.00    9804/9804        swap_all_tiles [7]
+                0.03    0.26 4467429/4467429     deque [10]
+                0.05    0.10 4888072/4888072     enque [17]
+                0.01    0.00  157665/157665      empty [31]
+                0.01    0.00    9999/9999        swap_wq [32]
+-----------------------------------------------
+                0.02    5.48 4450083/4450083     work [1]
+[2]     82.4    0.02    5.48 4450083         process_tile [2]
+                0.00    3.27  272329/272329      update_tile [3]
+                1.64    0.48 4823566/4823566     surrounding_edge_repeating [4]
+                0.04    0.00 9543831/9543831     atomic_increment [27]
+                0.00    0.03    7371/7371        update_tile_edge [28]
+                0.02    0.00  270905/270905      compare_char [30]
+-----------------------------------------------
+                0.00    3.27  272329/272329      process_tile [2]
+[3]     49.0    0.00    3.27  272329         update_tile [3]
+                1.51    0.57  265875/265875      update_tile_element_body [5]
+                0.17    0.04  261762/269018      update_tile_element_bot [13]
+                0.17    0.04  264298/271779      update_tile_element_left [14]
+                0.15    0.04  266415/273923      update_tile_element_right [15]
+                0.12    0.04  255598/262793      update_tile_element_top [16]
+                0.02    0.10  258051/265269      update_tile_element_bot_right [18]
+                0.01    0.10  257828/265309      update_tile_element_top_right [19]
+                0.00    0.10  258608/265863      update_tile_element_bot_left [20]
+                0.00    0.10  253665/260736      update_tile_element_top_left [21]
+-----------------------------------------------
+                1.64    0.48 4823566/4823566     process_tile [2]
+[4]     31.6    1.64    0.48 4823566         surrounding_edge_repeating [4]
+                0.28    0.00 17598726/21743937     mod [9]
+                0.08    0.00 4350469/4350469     right_edge_repeating [23]
+                0.05    0.00 4188379/4188379     left_edge_repeating [25]
+                0.05    0.00 4154441/4154441     top_edge_repeating [26]
+                0.02    0.00 4207062/4207062     bot_edge_repeating [29]
+-----------------------------------------------
+                1.51    0.57  265875/265875      update_tile [3]
+[5]     31.1    1.51    0.57  265875         update_tile_element_body [5]
+                0.57    0.00 50435114/66532907     alivep [6]
+-----------------------------------------------
+                0.01    0.00 1055882/66532907     update_tile_element [8]
+                0.04    0.00 3725835/66532907     update_tile_element_left [14]
+                0.04    0.00 3748603/66532907     update_tile_element_top [16]
+                0.04    0.00 3776209/66532907     update_tile_element_right [15]
+                0.04    0.00 3791264/66532907     update_tile_element_bot [13]
+                0.57    0.00 50435114/66532907     update_tile_element_body [5]
+[6]     11.2    0.75    0.00 66532907         alivep [6]
+-----------------------------------------------
+                0.62    0.00    9804/9804        work [1]
+[7]      9.3    0.62    0.00    9804         swap_all_tiles [7]
+-----------------------------------------------
+                0.02    0.08  263449/1063035     update_tile_element_top_left [21]
+                0.02    0.08  266027/1063035     update_tile_element_bot_left [20]
+                0.02    0.08  266291/1063035     update_tile_element_top_right [19]
+                0.02    0.08  267268/1063035     update_tile_element_bot_right [18]
+[8]      6.3    0.09    0.33 1063035         update_tile_element [8]
+                0.26    0.00 8313488/8313488     board [12]
+                0.06    0.00 4145211/21743937     mod [9]
+                0.01    0.00 1055882/66532907     alivep [6]
+-----------------------------------------------
+                0.06    0.00 4145211/21743937     update_tile_element [8]
+                0.28    0.00 17598726/21743937     surrounding_edge_repeating [4]
+[9]      5.1    0.34    0.00 21743937         mod [9]
+-----------------------------------------------
+                0.03    0.26 4467429/4467429     work [1]
+[10]     4.3    0.03    0.26 4467429         deque [10]
+                0.26    0.00 5087025/5087025     extract_tail [11]
+-----------------------------------------------
+                0.26    0.00 5087025/5087025     deque [10]
+[11]     3.9    0.26    0.00 5087025         extract_tail [11]
+-----------------------------------------------
+                0.26    0.00 8313488/8313488     update_tile_element [8]
+[12]     3.8    0.26    0.00 8313488         board [12]
+-----------------------------------------------
+                0.00    0.00    7256/269018      update_tile_edge [28]
+                0.17    0.04  261762/269018      update_tile [3]
+[13]     3.2    0.17    0.04  269018         update_tile_element_bot [13]
+                0.04    0.00 3791264/66532907     alivep [6]
+-----------------------------------------------
+                0.00    0.00    7481/271779      update_tile_edge [28]
+                0.17    0.04  264298/271779      update_tile [3]
+[14]     3.2    0.17    0.04  271779         update_tile_element_left [14]
+                0.04    0.00 3725835/66532907     alivep [6]
+-----------------------------------------------
+                0.00    0.00    7508/273923      update_tile_edge [28]
+                0.15    0.04  266415/273923      update_tile [3]
+[15]     2.9    0.15    0.04  273923         update_tile_element_right [15]
+                0.04    0.00 3776209/66532907     alivep [6]
+-----------------------------------------------
+                0.00    0.00    7195/262793      update_tile_edge [28]
+                0.12    0.04  255598/262793      update_tile [3]
+[16]     2.4    0.12    0.04  262793         update_tile_element_top [16]
+                0.04    0.00 3748603/66532907     alivep [6]
+-----------------------------------------------
+                0.05    0.10 4888072/4888072     work [1]
+[17]     2.2    0.05    0.10 4888072         enque [17]
+                0.10    0.00 4234403/4238499     insert_head [22]
+-----------------------------------------------
+                0.00    0.00    7218/265269      update_tile_edge [28]
+                0.02    0.10  258051/265269      update_tile [3]
+[18]     1.9    0.02    0.11  265269         update_tile_element_bot_right [18]
+                0.02    0.08  267268/1063035     update_tile_element [8]
+-----------------------------------------------
+                0.00    0.00    7481/265309      update_tile_edge [28]
+                0.01    0.10  257828/265309      update_tile [3]
+[19]     1.7    0.01    0.11  265309         update_tile_element_top_right [19]
+                0.02    0.08  266291/1063035     update_tile_element [8]
+-----------------------------------------------
+                0.00    0.00    7255/265863      update_tile_edge [28]
+                0.00    0.10  258608/265863      update_tile [3]
+[20]     1.6    0.00    0.11  265863         update_tile_element_bot_left [20]
+                0.02    0.08  266027/1063035     update_tile_element [8]
+-----------------------------------------------
+                0.00    0.00    7071/260736      update_tile_edge [28]
+                0.00    0.10  253665/260736      update_tile [3]
+[21]     1.6    0.00    0.10  260736         update_tile_element_top_left [21]
+                0.02    0.08  263449/1063035     update_tile_element [8]
+-----------------------------------------------
+                0.00    0.00    4096/4238499     init_queue_with_work [34]
+                0.10    0.00 4234403/4238499     enque [17]
+[22]     1.5    0.10    0.00 4238499         insert_head [22]
+-----------------------------------------------
+                0.08    0.00 4350469/4350469     surrounding_edge_repeating [4]
+[23]     1.2    0.08    0.00 4350469         right_edge_repeating [23]
+-----------------------------------------------
+                                                 <spontaneous>
+[24]     0.9    0.06    0.00                 main [24]
+                0.00    0.00       1/1           game_of_life [33]
+                0.00    0.00       1/1           to_int [46]
+                0.00    0.00       1/1           load_board [40]
+                0.00    0.00       1/2           make_board [37]
+                0.00    0.00       1/1           save_board [43]
+-----------------------------------------------
+                0.05    0.00 4188379/4188379     surrounding_edge_repeating [4]
+[25]     0.7    0.05    0.00 4188379         left_edge_repeating [25]
+-----------------------------------------------
+                0.05    0.00 4154441/4154441     surrounding_edge_repeating [4]
+[26]     0.7    0.05    0.00 4154441         top_edge_repeating [26]
+-----------------------------------------------
+                0.04    0.00 9543831/9543831     process_tile [2]
+[27]     0.6    0.04    0.00 9543831         atomic_increment [27]
+-----------------------------------------------
+                0.00    0.03    7371/7371        process_tile [2]
+[28]     0.5    0.00    0.03    7371         update_tile_edge [28]
+                0.00    0.00    7481/271779      update_tile_element_left [14]
+                0.00    0.00    7256/269018      update_tile_element_bot [13]
+                0.00    0.00    7508/273923      update_tile_element_right [15]
+                0.00    0.00    7195/262793      update_tile_element_top [16]
+                0.00    0.00    7218/265269      update_tile_element_bot_right [18]
+                0.00    0.00    7481/265309      update_tile_element_top_right [19]
+                0.00    0.00    7255/265863      update_tile_element_bot_left [20]
+                0.00    0.00    7071/260736      update_tile_element_top_left [21]
+-----------------------------------------------
+                0.02    0.00 4207062/4207062     surrounding_edge_repeating [4]
+[29]     0.3    0.02    0.00 4207062         bot_edge_repeating [29]
+-----------------------------------------------
+                0.02    0.00  270905/270905      process_tile [2]
+[30]     0.3    0.02    0.00  270905         compare_char [30]
+-----------------------------------------------
+                0.01    0.00  157665/157665      work [1]
+[31]     0.1    0.01    0.00  157665         empty [31]
+-----------------------------------------------
+                0.01    0.00    9999/9999        work [1]
+[32]     0.1    0.01    0.00    9999         swap_wq [32]
+-----------------------------------------------
+                0.00    0.00       1/1           main [24]
+[33]     0.0    0.00    0.00       1         game_of_life [33]
+                0.00    0.00       1/1           init_queue_with_work [34]
+                0.00    0.00       1/1           init_board [39]
+                0.00    0.00       1/2           init_queue [36]
+                0.00    0.00       1/1           board_exit [38]
+-----------------------------------------------
+                0.00    0.00       1/1           game_of_life [33]
+[34]     0.0    0.00    0.00       1         init_queue_with_work [34]
+                0.00    0.00    4096/4238499     insert_head [22]
+                0.00    0.00    4096/4100        new_node [35]
+                0.00    0.00       1/2           init_queue [36]
+-----------------------------------------------
+                0.00    0.00       4/4100        init_queue [36]
+                0.00    0.00    4096/4100        init_queue_with_work [34]
+[35]     0.0    0.00    0.00    4100         new_node [35]
+-----------------------------------------------
+                0.00    0.00       1/2           init_queue_with_work [34]
+                0.00    0.00       1/2           game_of_life [33]
+[36]     0.0    0.00    0.00       2         init_queue [36]
+                0.00    0.00       4/4100        new_node [35]
+-----------------------------------------------
+                0.00    0.00       1/2           main [24]
+                0.00    0.00       1/2           load_board_values [41]
+[37]     0.0    0.00    0.00       2         make_board [37]
+-----------------------------------------------
+                0.00    0.00       1/1           game_of_life [33]
+[38]     0.0    0.00    0.00       1         board_exit [38]
+-----------------------------------------------
+                0.00    0.00       1/1           game_of_life [33]
+[39]     0.0    0.00    0.00       1         init_board [39]
+-----------------------------------------------
+                0.00    0.00       1/1           main [24]
+[40]     0.0    0.00    0.00       1         load_board [40]
+                0.00    0.00       1/1           load_dimensions [42]
+                0.00    0.00       1/1           load_board_values [41]
+-----------------------------------------------
+                0.00    0.00       1/1           load_board [40]
+[41]     0.0    0.00    0.00       1         load_board_values [41]
+                0.00    0.00       1/2           make_board [37]
+-----------------------------------------------
+                0.00    0.00       1/1           load_board [40]
+[42]     0.0    0.00    0.00       1         load_dimensions [42]
+-----------------------------------------------
+                0.00    0.00       1/1           main [24]
+[43]     0.0    0.00    0.00       1         save_board [43]
+                0.00    0.00       1/1           save_dimensions [45]
+                0.00    0.00       1/1           save_board_values [44]
+-----------------------------------------------
+                0.00    0.00       1/1           save_board [43]
+[44]     0.0    0.00    0.00       1         save_board_values [44]
+-----------------------------------------------
+                0.00    0.00       1/1           save_board [43]
+[45]     0.0    0.00    0.00       1         save_dimensions [45]
+-----------------------------------------------
+                0.00    0.00       1/1           main [24]
+[46]     0.0    0.00    0.00       1         to_int [46]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [6] alivep (util.h)        [40] load_board             [26] top_edge_repeating
+  [27] atomic_increment       [41] load_board_values (load.c) [3] update_tile
+  [12] board                  [42] load_dimensions (load.c) [28] update_tile_edge
+  [38] board_exit             [24] main                    [8] update_tile_element
+  [29] bot_edge_repeating     [37] make_board              [5] update_tile_element_body
+  [30] compare_char            [9] mod (util.h)           [13] update_tile_element_bot
+  [10] deque                  [35] new_node               [20] update_tile_element_bot_left
+  [31] empty                   [2] process_tile           [18] update_tile_element_bot_right
+  [17] enque                  [23] right_edge_repeating   [14] update_tile_element_left
+  [11] extract_tail           [43] save_board             [15] update_tile_element_right
+  [33] game_of_life           [44] save_board_values (save.c) [16] update_tile_element_top
+  [39] init_board             [45] save_dimensions (save.c) [21] update_tile_element_top_left
+  [36] init_queue              [4] surrounding_edge_repeating [19] update_tile_element_top_right
+  [34] init_queue_with_work    [7] swap_all_tiles          [1] work
+  [22] insert_head            [32] swap_wq
+  [25] left_edge_repeating    [46] to_int (gol.c)
