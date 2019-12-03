@@ -11,7 +11,12 @@
 static inline int 
 mod (int x, int m)
 {
-  return (x < 0) ? ((x % m) + m) : (x % m);
+  if (x < 0) {
+    return x + m;
+  } else if (x >= m) {
+    return x - m;
+  }
+  return x;
 }
 
 /**
@@ -21,8 +26,12 @@ mod (int x, int m)
 static inline char 
 alivep (char count, char state)
 {
+  // return (count == 0b11 || (count == 0b10 && state));
+
   return (! state && (count == (char) 3)) ||
     (state && (count >= 2) && (count <= 3));
 }
+
+
 #endif /* _util_h */
 

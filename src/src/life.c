@@ -32,6 +32,11 @@ int num_rows;
 int num_cols;
 int ntilesc;
 int ntilesr;
+
+int ntilesc_m_ntilesr_s1;
+int ntilesc_s1;
+int ntilesr_s1;
+
 int max_gens;
 int max_gens_1;
 
@@ -51,26 +56,19 @@ char compare_char(char* left, char* right, int len) {
 	return 0;
 }
 
-void inline
+void
 atomic_increment(int* count) {
-	pthread_mutex_lock(&global_lock);
-	(*count)++;
-	pthread_mutex_unlock(&global_lock);
+	// pthread_mutex_lock(&global_lock);
+	// (*count)++;
+	// pthread_mutex_unlock(&global_lock);
 }
 
 char top_edge_repeating(TileState* ts) {
+	if (ts->repeating) return 1;
 	char* current = ts->tile_0;
 	char* prev_2 = ts->tile_2;
 
 	if (memcmp(current, prev_2, TILE_WIDTH) == 0) {
-		// printf("Top Edge:\ncurrent:\t");
-		// for (int i = 0; i < TILE_WIDTH; i++) {
-		// 	printf("%d", current[i]);
-		// }
-		// printf("\nprev_2  :\t");
-		// for (int i = 0; i < TILE_WIDTH; i++) {
-		// 	printf("%d", prev_2[i]);
-		// } printf("\n");
 		return 1;
 	}
 
@@ -78,6 +76,7 @@ char top_edge_repeating(TileState* ts) {
 }
 
 char bot_edge_repeating(TileState* ts) {
+	if (ts->repeating) return 1;
 	char* current = ts->tile_0 + TILE_SIZE - TILE_WIDTH ;
 	char* prev_2 = ts->tile_2 + TILE_SIZE - TILE_WIDTH ;
 	if (memcmp(current, prev_2, TILE_WIDTH) == 0) return 1;
@@ -85,6 +84,7 @@ char bot_edge_repeating(TileState* ts) {
 }
 
 char left_edge_repeating(TileState* ts) {
+	if (ts->repeating) return 1;
 	char* current = ts->tile_0;
 	char* prev_2 = ts->tile_2;
 
@@ -99,6 +99,7 @@ char left_edge_repeating(TileState* ts) {
 }
 
 char right_edge_repeating(TileState* ts) {
+	if (ts->repeating) return 1;
 	char* current = ts->tile_0 + TILE_WIDTH_1;
 	char* prev_2 = ts->tile_2 + TILE_WIDTH_1;
 
@@ -109,13 +110,6 @@ char right_edge_repeating(TileState* ts) {
 		current += TILE_WIDTH;
 		prev_2 += TILE_WIDTH;
 	}
-
-	// if (ts->gen == 30) {
-	// 	printf("current\n");
-	// 	print_board(ts->tile_0, TILE_WIDTH, TILE_HEIGHT);
-	// 	printf("prev\n");
-	// 	print_board(ts->tile_2, TILE_WIDTH, TILE_HEIGHT);
-	// }
 	return 1;
 }
 
@@ -157,22 +151,10 @@ char surrounding_edge_repeating(TileState* ts) {
 	char bot_left_repeating = (bot_left->tile_0[bot_left_id] == bot_left->tile_2[bot_left_id]);
 	char bot_right_repeating = (bot_right->tile_0[bot_right_id] == bot_right->tile_2[bot_right_id]);
 	//printf("ya\n");
-	if (top_edge_repeating(bot) && bot_edge_repeating(top)
-			&& left_edge_repeating(right) && right_edge_repeating(left)
-			&& top_left_repeating && top_right_repeating 
-			&& bot_left_repeating && bot_right_repeating) {
+	if (top_left_repeating && top_right_repeating 
+			&& bot_left_repeating && bot_right_repeating && top_edge_repeating(bot) && bot_edge_repeating(top)
+			&& left_edge_repeating(right) && right_edge_repeating(left)){
 		
-		// printf("Row/Col\n");
-		// printf("(%d, %d) (%d, %d), (%d, %d)\n", top_left->tile_row, top_left->tile_col,
-		// 		top->tile_row, top->tile_col, top_right->tile_row, top_right->tile_col);
-
-		// printf("(%d, %d) (%d, %d), (%d, %d)\n", left->tile_row, left->tile_col,
-		// 		ts->tile_row, ts->tile_col, right->tile_row, right->tile_col);
-
-		// printf("(%d, %d) (%d, %d), (%d, %d)\n", bot_left->tile_row, bot_left->tile_col,
-		// 		bot->tile_row, bot->tile_col, bot_right->tile_row, bot_right->tile_col);	
-		// print_surrounding_states(ts, global_ts, ntilesc, ntilesr);
-		// printf("Ending\n");
 		return 1;
 	}
 	//printf("Ending\n\n");
@@ -215,74 +197,180 @@ char update_tile_element(TileState* ts, int tile_i, int tile_j) {
 	return 0;
 }
 
+void update_tile_element_body(TileState* ts) {
+	char q, w, e, a, s, d, z, x, c;
+	int i, j;
+	char neighbor_count;
+	char* top_left = ts->tile_0;
+	char* new_cell = ts->next_tile + TILE_WIDTH_P1;
+
+	for (i = 1; i < TILE_HEIGHT_1; i++) {
+		q = *(top_left);
+		w = *(top_left+1);
+		e = *(top_left+2);
+		a = *(top_left+TILE_WIDTH);
+		s = *(top_left+TILE_WIDTH_P1);
+		d = *(top_left+TILE_WIDTH_P2);
+
+		z = *(top_left+TILE_WIDTH_M2);
+		x = *(top_left+TILE_WIDTH_M2_P1);
+		c = *(top_left+TILE_WIDTH_M2_P2);
+
+		for (j = 1; j < TILE_WIDTH_1; j++) {
+			neighbor_count = q + w + e + a + d + z + x + c;
+
+			*new_cell = alivep(neighbor_count, s);
+
+			top_left++;
+			new_cell++;
+
+			q = w;
+			w = e;
+			a = s;
+			s = d;
+			z = x;
+			x = c;
+			e = *(top_left+2);
+			d = *(top_left+TILE_WIDTH_P2);
+			c = *(top_left+TILE_WIDTH_M2_P2);
+
+		}
+		top_left += 2;
+		new_cell += 2;
+	}
+}
+
 void update_tile_element_top_left(TileState* ts) {
-	ts->top_left_updated = update_tile_element(ts, 0, 0);
+	update_tile_element(ts, 0, 0);
 }
 
 void update_tile_element_top_right(TileState* ts) {
-	ts->top_right_updated = update_tile_element(ts, 0, TILE_WIDTH_1);
+	update_tile_element(ts, 0, TILE_WIDTH_1);
 }
 
 void update_tile_element_bot_left(TileState* ts) {
-	ts->bot_left_updated = update_tile_element(ts, TILE_HEIGHT_1, 0);
+	update_tile_element(ts, TILE_HEIGHT_1, 0);
 }
 
 void update_tile_element_bot_right(TileState* ts) {
-	ts->bot_right_updated = update_tile_element(ts, TILE_HEIGHT_1, TILE_WIDTH_1);
+	update_tile_element(ts, TILE_HEIGHT_1, TILE_WIDTH_1);
 }
 
 void update_tile_element_top(TileState* ts) {
-	char updated = 0;
-	int i;
-	for (i = 1; i < TILE_WIDTH_1; i++) {
-		if (update_tile_element(ts, 0, i)) {
-			updated = 1;
-		}
+	TileState* other;
+	if (ts->tile_row == 0) {
+		other = ts + ntilesc_m_ntilesr_s1;
+	} else {
+		other = ts - ntilesc;
 	}
-	ts->top_updated = updated;
+
+	char q, w, e, a, s, d, z, x, c;
+	int i, j;
+	char neighbor_count;
+	char* mid = ts->tile_0;
+	char* top = other->tile_0 + TILE_SIZE_SWIDTH;
+	char* new_cell = ts->next_tile + 1;
+	q = *(top);
+	w = *(top+1);
+	e = *(top+2);
+
+	a = *(mid);
+	s = *(mid+1);
+	d = *(mid+2);
+
+	z = *(mid+TILE_WIDTH);
+	x = *(mid+TILE_WIDTH_P1);
+	c = *(mid+TILE_WIDTH_P2);
+
+	for (i = 1; i < TILE_HEIGHT_1; i++) {
+
+		neighbor_count = q + w + e + a + d + z + x + c;
+
+		*new_cell = alivep(neighbor_count, s);
+
+		mid++;
+		top++;
+		new_cell++;
+
+		q = w;
+		w = e;
+		a = s;
+		s = d;
+		z = x;
+		x = c;
+		e = *(top+2);
+		d = *(mid+2);
+		c = *(mid+TILE_WIDTH_P2);
+	}
 }
 
 void update_tile_element_right(TileState* ts) {
-	char updated = 0;
 	int i;
 	for (i = 1; i < TILE_HEIGHT_1; i++) {
 		if (update_tile_element(ts, i, TILE_WIDTH_1)) {
-			updated = 1;
 		}
 	}
-	ts->right_updated = updated;
 }
 
 void update_tile_element_bot(TileState* ts) {
-	char updated = 0;
-	int i;
-	for (i = 1; i < TILE_WIDTH_1; i++) {
-		if (update_tile_element(ts, TILE_HEIGHT_1, i)) {
-			updated = 1;
-		}
+	TileState* other;
+	if (ts->tile_row == ntilesr_s1) {
+		other = ts - ntilesc_m_ntilesr_s1;
+	} else {
+		other = ts + ntilesc;
 	}
-	ts->bot_updated = updated;
+
+	char q, w, e, a, s, d, z, x, c;
+	int i, j;
+	char neighbor_count;
+
+	char* top = ts->tile_0 + TILE_SIZE_M2SWIDTH;
+	char* bot = other->tile_0;
+	char* new_cell = ts->next_tile + TILE_SIZE_SWIDTH_P1;
+
+	q = *(top);
+	w = *(top+1);
+	e = *(top+2);
+
+	a = *(top+TILE_WIDTH);
+	s = *(top+TILE_WIDTH_P1);
+	d = *(top+TILE_WIDTH_P2);
+
+	z = *(bot);
+	x = *(bot+1);
+	c = *(bot+2);
+
+	for (i = 1; i < TILE_HEIGHT_1; i++) {
+
+		neighbor_count = q + w + e + a + d + z + x + c;
+
+		*new_cell = alivep(neighbor_count, s);
+
+		bot++;
+		top++;
+		new_cell++;
+
+		q = w;
+		w = e;
+		a = s;
+		s = d;
+		z = x;
+		x = c;
+		e = *(top+2);
+		d = *(top+TILE_WIDTH_P2);
+		c = *(bot+2);
+	}
 }
 
 void update_tile_element_left(TileState* ts) {
-	char updated = 0;
 	int i;
 	for (i = 1; i < TILE_HEIGHT_1; i++) {
 		if (update_tile_element(ts, i, 0)) {
-			updated = 1;
 		}
 	}
-	ts->left_updated = updated;
 }
 
-void update_tile_element_body(TileState* ts) {
-	int i, j;
-	for (i = 1; i < TILE_HEIGHT_1; i++) {
-		for (j = 1; j < TILE_WIDTH_1; j++) {
-			update_tile_element(ts, i, j);
-		}
-	}
-}
+
 void update_tile_edge(TileState* ts) {
 	update_tile_element_top_left(ts);
 	update_tile_element_top_right(ts);
@@ -316,14 +404,14 @@ void process_tile(TileState* ts) {
 				&& surrounding_edge_repeating(ts)) {
 			//printf("\t\tSurrounding repeating\n");
 			memcpy(ts->next_tile, ts->tile_1, TILE_SIZE);
-			ts->repeating = 1;
+			ts->next_repeating = 1;
 			atomic_increment(&repeating_tile_init);
 		} else {
 			update_tile(ts);
 		}
 	} else {
 		if (!surrounding_edge_repeating(ts)) {
-			ts->repeating = 0;
+			ts->next_repeating = 0;
 			update_tile_edge(ts);
 			atomic_increment(&repeating_body);
 		} else {
@@ -384,6 +472,9 @@ game_of_life (char* outboard,
 
 	ntilesc = nrows / TILE_WIDTH;
 	ntilesr = nrows / TILE_HEIGHT;
+	ntilesc_m_ntilesr_s1 = ntilesc * (ntilesr - 1);
+	ntilesc_s1 = ntilesc - 1;
+	ntilesr_s1 = ntilesr - 1;
 
 	global_ts = init_board(inboard, nrows, ncols);
 

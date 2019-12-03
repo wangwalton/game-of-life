@@ -21,11 +21,11 @@ USE_GCC=1
 ifeq ($(USE_GCC),1)
 	CC = gcc
 	LINKER = gcc
-	COPTFLAGS = -Wall -g -O2
+	COPTFLAGS = -Wall -g -pg -no-pie -O0
 else
 	CC = icc
 	LINKER = icc
-	COPTFLAGS = -g -O2
+	COPTFLAGS = -g -pg -no-pie -O0
 endif
 
 CPPFLAGS += -D$(TIMER_TYPE) 

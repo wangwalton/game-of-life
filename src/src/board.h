@@ -6,13 +6,25 @@
 #include <string.h>
 #include <math.h>
 
-#define TILE_HEIGHT 8
-#define TILE_WIDTH 8
+#define TILE_HEIGHT 16
+#define TILE_WIDTH 16
 
 #define TILE_HEIGHT_1 (TILE_HEIGHT - 1)
 #define TILE_WIDTH_1 (TILE_WIDTH - 1)
 
+#define TILE_WIDTH_S2 (TILE_WIDTH - 2)
+
+#define TILE_WIDTH_P1 (TILE_WIDTH + 1)
+#define TILE_WIDTH_P2 (TILE_WIDTH + 2)
+#define TILE_WIDTH_M2 (TILE_WIDTH * 2)
+#define TILE_WIDTH_M2_P1 (TILE_WIDTH * 2 + 1)
+#define TILE_WIDTH_M2_P2 (TILE_WIDTH * 2 + 2)
+#define TILE_WIDTH_M2_S1 (TILE_WIDTH * 2 - 1)
+
 #define TILE_SIZE TILE_HEIGHT * TILE_WIDTH
+#define TILE_SIZE_SWIDTH (TILE_SIZE - TILE_WIDTH)
+#define TILE_SIZE_SWIDTH_P1 (TILE_SIZE - TILE_WIDTH + 1)
+#define TILE_SIZE_M2SWIDTH (TILE_SIZE - TILE_WIDTH - TILE_WIDTH)
 
 #define GET_TILE( __tiles, __i, __j, NTILESC)  (__tiles[(__i / TILE_HEIGHT) * NTILESC + (__j / TILE_WIDTH)])
 #define TILE(__tile, __i, __j) (__tile[(__i % TILE_HEIGHT) * TILE_HEIGHT + (__j % TILE_HEIGHT)])
@@ -30,14 +42,7 @@ typedef struct {
     int tile_col;
     int gen;
     char repeating;
-    char top_updated;
-    char right_updated;
-    char bot_updated;
-    char left_updated;
-    char top_left_updated;
-    char top_right_updated;
-    char bot_right_updated;
-    char bot_left_updated;
+    char next_repeating;
 } TileState;
 
 void swap_all_tiles(TileState* global_ts, int ntilesr, int ntilesc);
@@ -117,27 +122,27 @@ void print_surrounding_states(TileState* ts, TileState* global_ts, int ntilesc, 
         j = j_start;
     }
 
-    i = i_start;
-    j = j_start;
-    printf("\n2 tiles ago:\n");
-    while (i != i_end) {
-        if (i == i_gap1 || i == i_gap2) {
-            printf("\n");
-        }
-        while (j != j_end) {
-            if (j == j_gap1 || j == j_gap2) {
-                printf(" ");
-            }
-            printf("%d", _BOARD_2(global_ts,i, j, ntilesc));
-            j = (j + 1) % (ntilesc * TILE_HEIGHT);
+    // i = i_start;
+    // j = j_start;
+    // printf("\n2 tiles ago:\n");
+    // while (i != i_end) {
+    //     if (i == i_gap1 || i == i_gap2) {
+    //         printf("\n");
+    //     }
+    //     while (j != j_end) {
+    //         if (j == j_gap1 || j == j_gap2) {
+    //             printf(" ");
+    //         }
+    //         printf("%d", _BOARD_2(global_ts,i, j, ntilesc));
+    //         j = (j + 1) % (ntilesc * TILE_HEIGHT);
             
-        }
+    //     }
         
 
-        printf("\n");
-        i = (i + 1) % (ntilesr * TILE_WIDTH);
-        j = j_start;
-    }
+    //     printf("\n");
+    //     i = (i + 1) % (ntilesr * TILE_WIDTH);
+    //     j = j_start;
+    // }
 }
 
 char read_board(TileState* ts, int i, int j, int ntilesc, int gen) {
@@ -156,6 +161,7 @@ void inline
 swap_all_tiles(TileState* global_ts, int ntilesr, int ntilesc) {
     int i, j;
     char* temp;
+
     int id;
     for (i = 0; i < ntilesr; i++) {
         for (j = 0; j < ntilesc; j++) {
@@ -168,6 +174,7 @@ swap_all_tiles(TileState* global_ts, int ntilesr, int ntilesc) {
             global_ts[id].tile_0 = global_ts[id].next_tile;
             global_ts[id].next_tile = temp;
 
+            global_ts[id].repeating = global_ts[id].next_repeating;
         }
     }
 }
@@ -215,14 +222,7 @@ TileState* init_board(char* board, int nrows, int ncols) {
             res[id].tile_col = j;
             res[id].gen = 0;
             res[id].repeating = 0;
-            res[id].top_updated = 0;
-            res[id].right_updated = 0;
-            res[id].bot_updated= 0;
-            res[id].left_updated= 0;
-            res[id].top_left_updated= 0;
-            res[id].top_right_updated= 0;
-            res[id].bot_right_updated= 0;
-            res[id].bot_left_updated= 0;
+
 
             is = i * TILE_HEIGHT;
             ie = is + TILE_HEIGHT;
